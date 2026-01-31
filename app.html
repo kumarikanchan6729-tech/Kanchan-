@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Explorer</title>
+
+    <!-- ===== CSS ===== -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #74ebd5, #9face6);
+            margin: 0;
+            padding: 0;
+        }
+
+        .app-container {
+            max-width: 420px;
+            margin: 40px auto;
+            background: #ffffff;
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .app-header {
+            text-align: center;
+        }
+
+        .search-container {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .search-container input {
+            flex: 1;
+            padding: 8px;
+        }
+
+        .search-container button {
+            padding: 8px 10px;
+            cursor: pointer;
+        }
+
+        .current-weather {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        #temperature {
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        .forecast {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .day {
+            background: #f0f0f0;
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+            width: 22%;
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <header class="app-header">
+        <h1>Weather Explorer</h1>
+        <p>Stay updated with the latest weather conditions</p>
+    </header>
+
+    <div class="search-container">
+        <input type="text" id="city" placeholder="Enter city name">
+        <button onclick="getWeather()">Search</button>
+        <button onclick="getCurrentLocation()">📍</button>
+    </div>
+
+    <div class="weather-container">
+        <section class="current-weather">
+            <h2 id="cityName">City</h2>
+            <p id="temperature">--°C</p>
+            <p id="description">Description: --</p>
+        </section>
+
+        <section class="forecast">
+            <div class="day">
+                <p class="weekday">Day</p>
+                <p class="temp">--°C</p>
+            </div>
+            <div class="day">
+                <p class="weekday">Day</p>
+                <p class="temp">--°C</p>
+            </div>
+            <div class="day">
+                <p class="weekday">Day</p>
+                <p class="temp">--°C</p>
+            </div>
+            <div class="day">
+                <p class="weekday">Day</p>
+                <p class="temp">--°C</p>
+            </div>
+        </section>
+    </div>
+</div>
+
+<!-- ===== JAVASCRIPT ===== -->
+<script>
+    const apiKey = "YOUR_API_KEY_HERE"; // Add your OpenWeatherMap API key
+
+    async function getWeather() {
+        const city = document.getElementById("city").value;
+        if (!city) return alert("Please enter a city name");
+
+        fetchWeather(
+            `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}`,
+            `https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=metric&appid=${apiKey}`
+        );
+    }
+
+    function getCurrentLocation() {
+        if (!navigator.geolocation) {
+            alert("Geolocation not supported");
+            return;
+        }
+
+        navigator.geolocation.getCurrentPosition(position => {
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+
+            fetchWeather(
+                `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${apiKey}`,
+                `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&appid=${apiKey}`
+            );
+        });
+    }
+
+    async function fetchWeather(currentUrl, forecastUrl) {
+        try {
+            const currentRes = await fetch(currentUrl);
+            const currentData = await currentRes.json();
+
+            document.getElementById("cityName").innerText = currentData.name;
+            document.getElementById("temperature").innerText =
+                `${Math.round(currentData.main.temp)}°C`;
+            document.getElementById("description").innerText =
+                currentData.weather[0].description;
+
+            const forecastRes = await fetch(forecastUrl);
+            const forecastData = await forecastRes.json();
+
+            const days = document.querySelectorAll(".day");
+
+            for (let i = 0; i < days.length; i++) {
+                const data = forecastData.list[i * 8];
+                const date = new Date(data.dt_txt);
+
+                days[i].querySelector(".weekday").innerText =
+                    date.toLocaleDateString("en-US", { weekday: "short" });
+                days[i].querySelector(".temp").innerText =
+                    `${Math.round(data.main.temp)}°C`;
+            }
+        } catch (error) {
+            alert("Failed to fetch weather data");
+        }
+    }
+</script>
+
+</body>
+</html>
