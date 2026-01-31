@@ -118,3 +118,86 @@ async function getWeather() {
         alert("Something went wrong. Try again later.");
     }
 }
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+    font-family:Poppins,sans-serif;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
+    background-size:cover;
+    background-position:center;
+}
+
+/* Weather backgrounds */
+body.clear{background-image:url('clear.jpg')}
+body.clouds{background-image:url('clouds.jpg')}
+body.rain{background-image:url('rain.jpg')}
+body.snow{background-image:url('snow.jpg')}
+body.default{background-image:url('default.jpg')}
+
+.app-container{
+    background:rgba(34,34,34,.8);
+    padding:20px;
+    border-radius:15px;
+    width:90%;
+    max-width:600px;
+    text-align:center;
+    box-shadow:0 6px 20px rgba(0,0,0,.5);
+}
+
+h1{color:#ff8c00;font-size:2.5rem}
+p{color:#aaa}
+
+.search-container{
+    display:flex;
+    gap:10px;
+    margin:20px 0;
+}
+
+input{
+    flex:1;
+    padding:10px;
+    border:none;
+    border-radius:25px;
+    background:#444;
+    color:#fff;
+}
+
+button{
+    padding:10px 20px;
+    border:none;
+    border-radius:25px;
+    background:#ff8c00;
+    color:#fff;
+    cursor:pointer;
+}
+
+button:hover{background:#cc6b00}
+
+.current-weather,.day{
+    background:#333;
+    padding:15px;
+    border-radius:15px;
+    box-shadow:0 4px 15px rgba(0,0,0,.3);
+}
+
+.current-weather{
+    display:flex;
+    gap:20px;
+    align-items:center;
+    margin-bottom:20px;
+}
+
+.forecast{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:15px;
+}
+
+.weekday{color:#ff8c00;font-weight:bold}
+
+@media(max-width:600px){
+    .forecast{grid-template-columns:repeat(2,1fr)}
+}
